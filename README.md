@@ -1,25 +1,27 @@
-# GitHub Codespaces ♥️ Django
+from flask import Flask
+import os
+import time
+import subprocess
 
-Welcome to your shiny new Codespace running Django! We've got everything fired up and running for you to explore Django.
+app = Flask(__name__)
 
-You've got a blank canvas to work on from a git perspective as well. There's a single initial commit with what you're seeing right now - where you go from here is up to you!
+@app.route('/htop')
+def htop():
+    name = "Your Full Name"
+    username = os.getenv("USER")
+    server_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    top_output = subprocess.check_output(['top', '-b', '-n', '1']).decode('utf-8')
+    return f"""
+    <html>
+        <body>
+            <h1>HTop Endpoint</h1>
+            <p><strong>Name:</strong> {name}</p>
+            <p><strong>Username:</strong> {username}</p>
+            <p><strong>Server Time (IST):</strong> {server_time}</p>
+            <pre>{top_output}</pre>
+        </body>
+    </html>
+    """
 
-Everything you do here is contained within this one codespace. There is no repository on GitHub yet. If and when you’re ready you can click "Publish Branch" and we’ll create your repository and push up your project. If you were just exploring then and have no further need for this code then you can simply delete your codespace and it's gone forever.
-
-## installing dependancies
-
-```python
-pip install -r requirements.txt
-```
-
-## To collect static files:
-
-```python
-python manage.py collectstatic
-```
-
-## To run this application:
-
-```python
-python manage.py runserver
-```
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8080)
